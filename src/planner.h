@@ -6,6 +6,51 @@
 #include "spline.h"
 using namespace std;
 
+class GridPlanner {
+public:
+  vector<vector<int>> obstacles_in_lane;
+  int target_lane;
+  int my_lane;
+  vector<string> grid;
+  string emptyrow = "|   |   |   |"; // 13 char
+
+  GridPlanner(){
+    for(int i=0; i<3; i++){
+      grid.push_back(emptyrow);
+    }
+    grid[2][6] = '*'; // car is in the center of the bottom row
+  };
+  void addObstacle(int lane, int y){
+    obstacles_in_lane[lane].push_back(y);
+  }
+  void setTarget(int t){
+    int oldidx = 2 + target_lane * 4;
+    target_lane = t;
+    int newidx = 2 + (t*4);
+    grid[0][newidx] = '^';
+    grid[0][oldidx] = ' ';
+  }
+  void updateMyLane(int l){
+    int oldidx = 2 + my_lane * 4;
+    my_lane = l;
+    int newidx = 2 + (l*4);
+    grid[0][newidx] = '*';
+    grid[0][oldidx] = ' ';
+  }
+  void clear(){
+    obstacles_in_lane.clear();
+    grid.clear();
+    for(int i=0; i<3; i++){
+      grid.push_back(emptyrow);
+    }
+  }
+  void plot(){
+    for(string row: grid){
+      cout<<row<<endl;
+    }
+  }
+};
+
 namespace planner {
 
   // For converting back and forth between radians and degrees.
