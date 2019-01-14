@@ -6,7 +6,7 @@
 #include "spline.h"
 using namespace std;
 
-namespace util {
+namespace planner {
 
   // For converting back and forth between radians and degrees.
   constexpr double pi() { return M_PI; }

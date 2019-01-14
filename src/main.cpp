@@ -6,9 +6,9 @@
 #include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
 #include <set>
-#include "util.h"
+#include "planner.h"
 
-using namespace util;
+using namespace planner;
 // for convenience
 using json = nlohmann::json;
 
