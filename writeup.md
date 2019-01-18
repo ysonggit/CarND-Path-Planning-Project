@@ -1,4 +1,4 @@
-# Highway Path Planner using A\* Search
+# A Highway Path Planner using A\* Search
 
 ## Objectives
 
@@ -42,13 +42,13 @@ The local planner computes the "right" lane, which is lane 2 on the right and ou
 
 My solution to the problem of finding the "best" lane for the vehicle is using the A\* search [1]. I integrate Damian Barczyński's [2] nice implementation of A\* search into my planner.
 
-To apply this algorithm, the key is to build a virtual grid map for the vehicle and fill in the obstacles according to the car's sensing data. For simplicity, I use a 3x3 grid map along with the following symbols to represent the cars:
+To apply this algorithm, the key is to build a virtual grid map for the vehicle and fill in the obstacles according to the car’s sensing data. For simplicity, I use a 3xN grid map, where N is the number of lanes, along with the following symbols to represent the cars:
 
 - `*`: the position of my self-driving car
 - `o`: the other car
 - `(*)`: the target position of my self-driving car
 
-Take the figure above as an example, the grid map would become:
+Take the figure above as an example, the map would become a 3x3 grid:
 
 ```
 |   | o |(*)|
@@ -65,7 +65,7 @@ Therefore, the question of "which lane is the best one to drive" becomes: **"fin
 
 In detail, the steps to construct a grid map using the sensor data are:
 ```
-1. initialize a 3x3 grid with all free spaces
+1. initialize a 3xN grid with all free spaces
 2. fill * (start position) in the cell at (2, my_lane_index)
 3. for each car observed and localized by my sensor:
       ignore any car behind my car in the same lane
@@ -78,14 +78,14 @@ In detail, the steps to construct a grid map using the sensor data are:
 4. for each lane_index, set target position in one free cell at (0, lane_index)
 ```
 
-So at maximum there would be 3 grids, do the A\* search for each grid map and select the target lane in which the path from start position has the minimum cost.
+Because of N lanes, at maximum, there would be N grid maps when there is a free space on each lane ahead of my vehicle, the planner does the A* search for each grid map and selects the target lane in which the path from start position has the minimum cost.
 
 Take the scenario in the below picture as an example, suppose my car is the RED one. The dotted red circle represents my car's sensing range, so we know:
 
-- my car is in lane 0
-- a green car is in the lane 0 ahead
-- a blue car is in the lane 1 almost in parallel
-- no cars in the lane 2
+- my car runs on the lane 0
+- a green car is on the lane 0 ahead
+- a blue car is on the lane 2 almost in parallel with my car
+- no cars on the lane 1
 
 <img src="./image/carrange_onecircle.png" width="320"/>
 
@@ -118,17 +118,6 @@ So the best lane for my car in this scenario is the left lane.
 
 <img src="./image/snapshot1.png" width="640"/>
 
-This planner demonstrates its effectiveness in one of my testing runs. The following four snapshots shows a my car from the left lane completes the lane searching and changing smoothly to the right lane, while maintaining a high speed.
-
-<img src="./image/continuous_change_1.png" width="640"/>
-
-<img src="./image/continuous_change_2.png" width="640"/>
-
-<img src="./image/continuous_change_3.png" width="640"/>
-
-<img src="./image/continuous_change_4.png" width="640"/>
-
-
 ### Attentive Driver
 
 There is one type of scenario that could risk my car's safety, as the figure shows below:
@@ -143,7 +132,7 @@ In this case, the planner will find the target lane in the middle:
 | * | o |   |
 ```
 
-But watch out! There is one blue car driving on the middle lane and is very close to my position. If my car changes lane it may collide with the blue one. Therefore, I set an attentive range (the red circle in the figure above) for my car so that if there are any vehicles in this attentive range, simply ignore the planner's target and let my car keep the lane.
+But watch out! There is one blue car driving on the middle lane and is very close to my position. If my car changes lane it may collide with the blue one. Therefore, I define an attentive radius, say 15 meters, (represented by the solid red circle in the figure) for my car so that if there are any vehicles detected in this attentive range, simply ignore the planner’s target and let my car keep the lane.
 
 ### Nowhere to Go
 
