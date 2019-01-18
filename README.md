@@ -15,7 +15,7 @@ I implemented a path planner based on A\* algorithm. As expected, the it takes a
 
 The full-length simulation video is available at [Vimeo](https://vimeo.com/311557329).
 
-Please read my [writeup](writeup.md) for details of the planner design.
+Please read my [article](https://medium.com/@ysong.sc/a-highway-path-planner-using-a-search-ac26a9caeb63) for details of the planner design.
 
 #### The map of the highway is in data/highway_map.txt
 Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
