@@ -1,6 +1,6 @@
 # Highway Path Planner using A\* Search
 
-##  Objectives
+## Objectives
 
 Quote the objectives from [Readme](./README.md), the goal is to design and implement a path planner that is able to create smooth, safe paths for the car to follow along a 3 lane highway with traffic.
 
@@ -12,7 +12,7 @@ A successful path planner will be able to:
 In general, it expects the car to a little over 5 minutes to complete 1 loop in a highway scenario. Also, the car should not accelerate or jerk too quickly.
 
 
-## Problem Statement
+## Problem Statement
 
 Given the vehicle's map and localization data, as well as its observations of the road, including the other car's positions, lanes, and speeds, the path planner should compute a safe (obstacle-free) trajectory so that the car stays in the lane with the light traffic as much as possible. Meanwhile, consider the speed limits in the highway scenario, the car should not move too slowly or quickly.
 
