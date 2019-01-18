@@ -1,4 +1,4 @@
-# Write Up
+# Highway Path Planner using A\* Search
 
 ##  Objectives
 
@@ -40,7 +40,9 @@ The local planner computes the "right" lane, which is lane 2 on the right and ou
 
 ## A* Local Planner
 
-My solution to the problem of finding the "best" lane for the vehicle is using the A\* search [1]. To apply this algorithm, the key is to build a virtual grid map for the vehicle and fill in the obstacles according to the car's sensing data. For simplicity, I use a 3x3 grid map along with the following symbols to represent the cars:
+My solution to the problem of finding the "best" lane for the vehicle is using the A\* search [1]. I integrate Damian Barczyński's [2] nice implementation of A\* search into my planner.
+
+To apply this algorithm, the key is to build a virtual grid map for the vehicle and fill in the obstacles according to the car's sensing data. For simplicity, I use a 3x3 grid map along with the following symbols to represent the cars:
 
 - `*`: the position of my self-driving car
 - `o`: the other car
@@ -85,7 +87,7 @@ Take the scenario in the below picture as an example, suppose my car is the RED 
 - a blue car is in the lane 1 almost in parallel
 - no cars in the lane 2
 
-<img src="./image/carrace_circle.png" width="360"/>
+<img src="./image/carrange_onecircle.png" width="320"/>
 
 Recall the map construction strategy above, there would be two possible grid maps accordingly:
 
@@ -105,7 +107,6 @@ and
 
 By applying the A\* search to each of the maps, the best lane would be the middle lane because the path cost is 3, whereas the cost to the rightmost lane is 4.
 
-
 Another example is shown in the simulation snapshot below, in which my car knows:
 
 - itself runs on the middle lane
@@ -117,13 +118,48 @@ So the best lane for my car in this scenario is the left lane.
 
 <img src="./image/snapshot1.png" width="640"/>
 
-### Blocked Everywhere
+This planner demonstrates its effectiveness in one of my testing runs. The following four snapshots shows a my car from the left lane completes the lane searching and changing smoothly to the right lane, while maintaining a high speed.
 
-It may happen that there are cars in each lane ahead, so my car is blocked. In this case, the target is missing, so the best strategy is keeping current lane as the snapshot below.
+<img src="./image/continuous_change_1.png" width="640"/>
+
+<img src="./image/continuous_change_2.png" width="640"/>
+
+<img src="./image/continuous_change_3.png" width="640"/>
+
+<img src="./image/continuous_change_4.png" width="640"/>
+
+
+### Attentive Driver
+
+There is one type of scenario that could risk my car's safety, as the figure shows below:
+
+<img src="./image/carrace_circle.png" width="360"/>
+
+In this case, the planner will find the target lane in the middle:
+
+```
+| o |(*)|   |
+|   |   |   |
+| * | o |   |
+```
+
+But watch out! There is one blue car driving on the middle lane and is very close to my position. If my car changes lane it may collide with the blue one. Therefore, I set an attentive range (the red circle in the figure above) for my car so that if there are any vehicles in this attentive range, simply ignore the planner's target and let my car keep the lane.
+
+### Nowhere to Go
+
+It may happen that there are cars on each lane ahead, so my car is blocked. In this case, the planner has no the target to search, so the best strategy is keeping current lane (snapshot below) until there are any vacancies coming up later.
 
 <img src="./image/all_blocked.png" width="640"/>
 
+## Simulation
 
+I tested my planner with the Udacity Term3 Simulator several times and the car can finish one loop about 4.4 miles safely in less than 6 minutes. The driving process satisfies the [Project Rubric](https://review.udacity.com/#!/rubrics/1971/view).
+
+Here is the snapshot of the moment when my car completes a loop.
+
+<img src="./image/one_loop_in_5min.png" width="640"/>
+
+The full simulation video is available at [Vimeo](https://vimeo.com/311557329).
 
 ## References
 
